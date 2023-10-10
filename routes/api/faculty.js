@@ -6,6 +6,8 @@ const { generateJwtToken } = require('../../utils/jwtUtils');
 
 const FacultyAccountSchema = require('../../models/FacultyAccountSchema')
 
+const FacultyDetail = require('../../models/FacultyDetail');
+
 router.get('/test', (req, res) => res.send('book route testing!'));
 
 
@@ -63,12 +65,77 @@ router.post('/login', async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
     });
 
-    res.status(200).json({ message: 'Authentication successful', token: token});
+    res.status(200).json({ message: 'Authentication successful', token: token });
   } catch (error) {
     console.error('Error authenticating user:', error);
     res.status(500).json({ error: 'Authentication failed' });
   }
 });
+
+router.post('/updateFacultyDetails', async (req, res) => {
+  try {
+    const formData = req.body;
+
+    console.log(formData);
+    console.log(req.body);
+
+    // Check if faculty with the provided email exists
+    const existingFaculty = await FacultyDetail.findOne({ email: formData.email });
+
+    if (existingFaculty) {
+      // Update existing faculty details
+      const updatedFaculty = await FacultyDetail.findOneAndUpdate(
+        { email: formData.email },
+        { $set: formData },
+        { new: true }
+      );
+
+      return res.json(updatedFaculty);
+    } else {
+      // Add new faculty if not already exists
+      const newFaculty = new FacultyDetail(formData);
+      const savedFaculty = await newFaculty.save();
+
+      return res.json(savedFaculty);
+    }
+  } catch (error) {
+    console.error('Error updating or adding faculty:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+router.get('/facultyList', async (req, res) => {
+  try {
+    const facultyList = await FacultyDetail.find({}, 'name');
+    res.json(facultyList);
+  } catch (error) {
+    console.error('Error fetching faculty list:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+router.get('/facultyList', async (req, res) => {
+  try {
+    const facultyList = await FacultyDetail.find({}, 'name');
+    res.json(facultyList);
+  } catch (error) {
+    console.error('Error fetching faculty list:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+// Get faculty details by ID
+router.get('/faculty/:id', async (req, res) => {
+  try {
+    const facultyId = req.params.id;
+    const facultyDetails = await FacultyDetail.findById(facultyId);
+    res.json(facultyDetails);
+  } catch (error) {
+    console.error('Error fetching faculty details:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 
 
 module.exports = router;
