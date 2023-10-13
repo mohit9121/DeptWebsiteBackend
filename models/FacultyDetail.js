@@ -24,6 +24,12 @@ const facultySchema = new mongoose.Schema({
   infoForProspectiveStudents: {
     type: String,
   },
+  department:{
+    type: String,
+  },
+  links:{
+    type: [String],
+  },
   bio: {
     type: String,
   },
