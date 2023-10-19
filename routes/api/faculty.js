@@ -8,8 +8,9 @@ const FacultyAccountSchema = require('../../models/FacultyAccountSchema')
 
 const FacultyDetail = require('../../models/FacultyDetail');
 
-router.get('/test', (req, res) => res.send('book route testing!'));
+const AchievementDetail = require('../../models/achievements')
 
+router.get('/test', (req, res) => res.send('book route testing!'));
 
 router.post('/addNewFaculty', async (req, res) => {
   try {
@@ -37,6 +38,31 @@ router.post('/addNewFaculty', async (req, res) => {
   }
 
 });
+
+
+router.post('/updateAchievments', async (req, res) => {
+  try {
+
+    console.log(req.body.achievementsData[0]);
+
+    const newAch = new AchievementDetail({
+      name: req.body.achievementsData[0].name,
+      link: req.body.achievementsData[0].link,
+    })
+
+    console.log(newAch);
+
+    await newAch.save();
+
+    res.status(201).json({ message: 'New Achievement Added Successfully' });
+  }
+  catch (error) {
+    console.error('Error registering faculty:', error);
+    res.status(500).json({ error: 'Registration of the new faculty failed' });
+  }
+
+});
+
 
 router.post('/login', async (req, res) => {
   try {
