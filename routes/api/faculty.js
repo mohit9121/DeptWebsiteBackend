@@ -63,6 +63,15 @@ router.post('/updateAchievments', async (req, res) => {
 
 });
 
+router.get('/getAchievements', async (req, res) => {
+  try {
+    const achievementsList = await AchievementDetail.find({});
+    console.log(achievementsList);
+  } catch (error) {
+    console.error('Error fetching achievements list:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 router.post('/login', async (req, res) => {
   try {
